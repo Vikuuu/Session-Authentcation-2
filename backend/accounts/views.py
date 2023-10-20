@@ -57,3 +57,34 @@ class signupView(APIView):
                 return Response({"error": "Passwords does not match"})
         except Exception as e:
             return Response({"error": "Something went wrong !!!  " + str(e)})
+
+
+@method_decorator(csrf_protect, name="dispatch")
+class loginView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        data = request.data
+
+        email = data["email"]
+        password = data["password"]
+
+        try:
+            user = auth.authenticate(email=email, password=password)
+            if user is not None:
+                auth.login(request, user)
+                return Response({"success": "User logged in successfully"})
+            else:
+                return Response({"error": "User not available"})
+        except Exception as e:
+            return Response(
+                {"error": "Something went wrong while logging in  " + str(e)}
+            )
+
+class logoutView(APIView):
+    def post(self, request, format=None):
+        try:
+            auth.logout(request)
+            return Response({"success" : "User logged out successfully"})
+        except Exception as e:
+            return Response({"error" : "Something went wrong while logging out  " + str(e)})
