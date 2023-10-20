@@ -81,10 +81,26 @@ class loginView(APIView):
                 {"error": "Something went wrong while logging in  " + str(e)}
             )
 
+
 class logoutView(APIView):
     def post(self, request, format=None):
         try:
             auth.logout(request)
-            return Response({"success" : "User logged out successfully"})
+            return Response({"success": "User logged out successfully"})
         except Exception as e:
-            return Response({"error" : "Something went wrong while logging out  " + str(e)})
+            return Response(
+                {"error": "Something went wrong while logging out  " + str(e)}
+            )
+
+
+class deleteView(APIView):
+    def post(self, request, format=None):
+        user = self.request.user
+
+        try:
+            user = User.objects.get(id=user.id).delete()
+            return Response({"success": "User Account Deleted successfully"})
+        except Exception as e:
+            return Response(
+                {"error": "Something went wrong while deleting user  " + str(e)}
+            )
